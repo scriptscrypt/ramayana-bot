@@ -1,0 +1,18 @@
+# General
+__pycache__/
+*.pyc
+
+# Virtual environment
+ramayana_bot/
+
+# IDE
+.vscode/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Credentials
+RamayanaBotSACredentials.json
