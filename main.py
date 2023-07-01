@@ -1,5 +1,6 @@
 import os
 import telebot
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 #GSheets Imports: 
 import gspread
@@ -32,9 +33,29 @@ sheet = client.open_by_key(spreadsheet_key).worksheet(sheet_name)
 
 # ------------- Functions Start -------------
 
+# Set command suggestions
+commands = [
+    telebot.types.BotCommand('/father', 'Get father\'s name by character\'s name'),
+    telebot.types.BotCommand('/mother', 'Get mother\'s name by character\'s name'),
+    telebot.types.BotCommand('/help', 'Show available commands')
+]
+bot.set_my_commands(commands)
+
+# Set up custom keyboard with buttons
+keyboard = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, one_time_keyboard=True)
+button1 = KeyboardButton(text='Father\'s name')
+button2 = KeyboardButton('/mother')
+keyboard.add(button1, button2)
+
+# Handle the /start command
+@bot.message_handler(commands=['start'])
+def handle_start_command(message):
+    bot.reply_to(message, 'Jai Shree RAM! How can we assist you?', reply_markup=keyboard)
+
+
 @bot.message_handler(commands = ['repMessage'])
 def repMessage(message):
-  bot.reply_to(message, "Hey");  
+  bot.reply_to(message, "Hey",reply_markup=keyboard);  
   
 @bot.message_handler(commands = ['sendMessage'],content_types="text")
 def sendMessage(message):
@@ -57,7 +78,7 @@ def handle_father_command(message):
         else:
             bot.reply_to(message, f"No data found for {character_name.capitalize()}.")
     else:
-        bot.reply_to(message, "Invalid command format. Please use /father sonName.")
+        bot.reply_to(message, "Father's name for the character_name \t \n Command: /father character_name")
 
 # Retrieve the father's name from the Google Spreadsheet
 def get_father_name(character_name):
@@ -75,11 +96,11 @@ def handle_mother_command(message):
         character_name = command_parts[1]
         mother_name = get_mother_name(character_name)
         if mother_name:
-            bot.send_message(message.chat.id, f"{character_name.capitalize()}'s mother is {mother_name.capitalize()}. \n Learn more: https://en.wikipedia.org/wiki/{mother_name}")
+            bot.send_message(message.chat.id, f"{character_name.capitalize()}'s mother is {mother_name.capitalize()}. \n  Learn more: https://en.wikipedia.org/wiki/{mother_name}")
         else:
             bot.reply_to(message, f"No data found for {character_name}.")
     else:
-        bot.reply_to(message, "Invalid command format. Please use /mother sonName.")
+        bot.reply_to(message, "Mother's name for the given character_name \t \n Command: /mother character_name")
 
 # Retrieve the mother's name from the Google Spreadsheet
 def get_mother_name(character_name):
