@@ -43,7 +43,7 @@ bot.set_my_commands(commands)
 
 # Set up custom keyboard with buttons
 keyboard = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, one_time_keyboard=True)
-button1 = KeyboardButton(text='Father\'s name')
+button1 = KeyboardButton('\*/father_',)
 button2 = KeyboardButton('/mother')
 keyboard.add(button1, button2)
 
@@ -51,7 +51,6 @@ keyboard.add(button1, button2)
 @bot.message_handler(commands=['start'])
 def handle_start_command(message):
     bot.reply_to(message, 'Jai Shree RAM! How can we assist you?', reply_markup=keyboard)
-
 
 @bot.message_handler(commands = ['repMessage'])
 def repMessage(message):
@@ -73,7 +72,7 @@ def handle_father_command(message):
         character_name = command_parts[1]
         father_name = get_father_name(character_name)
         if father_name:
-            bot.send_message(message.chat.id,f"          {character_name.capitalize()}'s father is {father_name.capitalize()}, Learn More : https://en.wikipedia.org/wiki/{father_name}") 
+            bot.send_message(message.chat.id,f"{character_name.capitalize()}'s father is {father_name.capitalize()}, Learn More : https://en.wikipedia.org/wiki/{father_name}") 
           
         else:
             bot.reply_to(message, f"No data found for {character_name.capitalize()}.")
@@ -88,7 +87,7 @@ def get_father_name(character_name):
             return row[3] # Assuming father names are in the forth column
     return None
 
-# Handle the /father command
+# Handle the /mother command
 @bot.message_handler(commands=['mother'])
 def handle_mother_command(message):
     command_parts = message.text.split()
@@ -110,11 +109,24 @@ def get_mother_name(character_name):
             return row[4]  # Assuming mother names are in the fifth column
     return None
 
+# Handle the /typing command
+@bot.message_handler(commands=['typing'])
+def handle_typing_command(message):
+    bot.send_chat_action(message.chat.id, "Typing") 
 
+# Handle the /invite command - Works only on groups :
+@bot.message_handler(commands=['invite'])
+def handle_invite_command(message):
+    bot.export_chat_invite_link(message.chat.id) 
 
 @bot.message_handler(func=lambda message: True, content_types=['audio', 'photo', 'voice', 'video', 'document','text', 'location', 'contact', 'sticker'])
 
 def default_command(message):
   bot.send_message(message.chat.id, f"This is the default command handler. Input is {message.chat.id}")
 
+
 bot.polling()
+
+# Terminal commands - To create a virtual environment and run the bot - For VS CODE
+# py -m venv ramayana_bot
+# ramayana_bot\Scripts\activate
